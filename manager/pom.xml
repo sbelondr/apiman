@@ -10,6 +10,15 @@
   <packaging>pom</packaging>
   <name>apiman-manager</name>
 
+  <dependencies>
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.9.0</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+
   <modules>
     <module>api</module>
     <module>ui</module>

@@ -66,6 +66,12 @@
 
     <!-- Third Party Dependencies -->
     <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.9.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>

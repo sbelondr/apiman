@@ -131,6 +131,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -142,6 +144,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import static io.apiman.manager.api.security.ISecurityContext.EntityType.API;
 import static io.apiman.manager.api.security.ISecurityContext.EntityType.PLAN;
@@ -701,7 +704,20 @@ public class OrganizationResourceImpl implements IOrganizationResource, DataAcce
         throws ApiVersionNotFoundException, NotAuthorizedException, InvalidApiStatusException {
         securityContext.checkPermissions(PermissionType.apiEdit, organizationId);
         try {
-            URL url = new URL(bean.getDefinitionUrl());
+            String definitionUrl = bean.getDefinitionUrl();
+            String[] schemes = {"http","https"};
+            String local_regex = "^(https|http):\\/\\/(127\\.|0\\.).*";
+            UrlValidator urlValidator = new UrlValidator(schemes);
+
+            Pattern pattern = Pattern.compile(local_regex, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(definitionUrl);
+            boolean matchFound = matcher.find();
+
+            if (!urlValidator.isValid(definitionUrl) || matchFound) {
+                throw new IOException("Invalid URL: Only http or https is authorized. The localhost address is also not allowed.");
+            }
+
+            URL url = new URL(definitionUrl);
             InputStream is = url.openStream();
             apiService.setApiDefinition(organizationId, apiId, version, bean, is);
         } catch (IOException ioe) {
