@@ -171,6 +171,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -183,6 +185,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -2249,6 +2252,19 @@ public class OrganizationResourceImpl implements IOrganizationResource {
         String definitionUrl;
         try {
             definitionUrl = bean.getDefinitionUrl();
+
+            String[] schemes = {"http","https"};
+            String local_regex = "^(https|http):\\/\\/(127\\.|0\\.).*";
+            UrlValidator urlValidator = new UrlValidator(schemes);
+
+            Pattern pattern = Pattern.compile(local_regex, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(definitionUrl);
+            boolean matchFound = matcher.find();
+
+            if (!urlValidator.isValid(definitionUrl) || matchFound) {
+                throw new IOException("Invalid URL: Only http or https is authorized. The localhost address is also not allowed.");
+            }
+
             URL url = new URL(definitionUrl);
             data = url.openStream();
         } catch (IOException e) {

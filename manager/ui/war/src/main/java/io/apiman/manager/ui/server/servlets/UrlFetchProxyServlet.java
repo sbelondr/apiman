@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 
 /**
  * A proxy servlet used to get around cross-origin problems when pulling
@@ -61,6 +64,18 @@ public class UrlFetchProxyServlet extends HttpServlet {
         if (url == null) {
             resp.sendError(500, "No URL specified in X-Apiman-Url"); //$NON-NLS-1$
             return;
+        }
+
+        String[] schemes = {"http","https"};
+        String local_regex = "^(https|http):\\/\\/(127\\.|0\\.).*";
+        UrlValidator urlValidator = new UrlValidator(schemes);
+
+        Pattern pattern = Pattern.compile(local_regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
+        boolean matchFound = matcher.find();
+
+        if (!urlValidator.isValid(url) || matchFound) {
+            resp.sendError(401, "Invalid URL: Only http or https is authorized. The localhost address is also not allowed.");
         }
 
         URL remoteUrl = new URL(url);

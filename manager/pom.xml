@@ -16,6 +16,12 @@
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.9.0</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
   <modules>
     <module>api</module>
