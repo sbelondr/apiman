@@ -54,6 +54,7 @@
     "d3": "3.5.6",
     "ip-address": "8.1.0",
     "jquery": "3.5.1",
+    "js-yaml": "^4.1.0",
     "lodash-es": "4.17.21",
     "luxon": "2.5.2",
     "ng-file-upload": "9.1.1",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@types/angular": "1.8.3",
     "@types/jquery": "3.5.1",
+    "@types/js-yaml": "^4.0.9",
     "@types/lodash": "4.14.191",
     "@types/luxon": "2.3.2",
     "@types/swagger-ui": "3.52.0",

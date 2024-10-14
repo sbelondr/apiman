@@ -2,6 +2,9 @@ import { _module } from './apimanPlugin';
 import * as SwaggerUI from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
 
+import * as yaml from 'js-yaml';
+import { dataSwagger } from './load_swagger';
+
 _module.controller("Apiman.ManagerRestApiDefController",
     ['$q', '$rootScope', '$scope', 'PageLifecycle', 'Configuration',
         function ($q, $rootScope, $scope, PageLifecycle, Configuration) {
@@ -10,13 +13,15 @@ _module.controller("Apiman.ManagerRestApiDefController",
 
                 PageLifecycle.setPageTitle('manager-rest-def');
 
-                $scope.definitionUrl = Configuration.api.endpoint + '/swagger.yaml';
+                //$scope.definitionUrl = Configuration.api.endpoint + '/swagger.yaml';
+                const swaggerDocument = yaml.load(dataSwagger);
 
                 if (SwaggerUI) {
                     $scope.definitionStatus = 'loading';
                     let ui;
                     let swaggerOptions: SwaggerUI.SwaggerUIOptions = {
-                        url: $scope.definitionUrl,
+                        spec: swaggerDocument,
+                        //url: $scope.definitionUrl,
                         dom_id: "#swagger-ui-container",
                         validatorUrl: "https://online.swagger.io/validator",
                         layout: "BaseLayout",
